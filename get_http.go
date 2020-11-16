@@ -1,4 +1,4 @@
-package get_http
+package gethttp
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ func GetHTTP(w http.ResponseWriter, r *http.Request) {
 	var d struct {
 		Name string `json:"name"`
 	}
-	setupDbPool()
+	checkDbIntegration()
 	if err := json.NewDecoder(r.Body).Decode(&d); err != nil {
 		fmt.Fprint(w, "Hello, World!")
 		return
