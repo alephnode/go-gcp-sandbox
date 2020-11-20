@@ -5,7 +5,11 @@ import (
 	"log"
 )
 
-func getAuthorName() (string, error) {
+type author struct {
+	authorName, authorID string
+}
+
+func getAuthor() (author, error) {
 
 	dbPool, err := setupDbConnectionPool()
 
@@ -13,22 +17,21 @@ func getAuthorName() (string, error) {
 		log.Fatalf("%s", err)
 	}
 
-	var authorName string
-	authorID := 3
-	sqlStatement := `SELECT author_name FROM authors WHERE author_id=$1;`
+	var authorResponse author
+	sqlStatement := `SELECT * FROM authors WHERE author_id=3;`
 
-	row := dbPool.QueryRow(sqlStatement, authorID)
+	row := dbPool.QueryRow(sqlStatement)
 
-	switch err = row.Scan(&authorName); err {
+	switch err = row.Scan(&authorResponse.authorID, &authorResponse.authorName); err {
 	case sql.ErrNoRows:
 		log.Println("ERROR -- No rows were returned!")
 	case nil:
 		log.Println("INFO -- connected to authors table")
-		log.Printf("author name is %q", authorName)
+		log.Printf("author name is %q", authorResponse)
 	default:
 		log.Printf("ERROR -- %q", err)
 		panic(err)
 	}
 
-	return authorName, err
+	return authorResponse, err
 }
